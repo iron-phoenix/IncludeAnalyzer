@@ -30,9 +30,9 @@ namespace fs = boost::filesystem;
 template<typename IncludeGetter = IncludeFinder>
 struct TreeBuilder {
 	TreeBuilder(string const & home_path, vector<string> const & include_paths) :
-		home_path(home_path) {
+		m_home_path(home_path) {
 		for (string const & include_path : include_paths) {
-			this->include_paths.emplace_back(include_path);
+			this->m_include_paths.emplace_back(include_path);
 		}
 	}
 
@@ -40,19 +40,18 @@ struct TreeBuilder {
 	TreeBuilder & operator=(TreeBuilder const &) = delete;
 
 	NodePtr build_path_tree(vector<string> const & extensions) const {
-		if (!fs::exists(home_path) && !fs::is_directory(home_path)) {
-			throw std::runtime_error("Path not find: " + home_path.string());
+		if (!fs::exists(m_home_path) && !fs::is_directory(m_home_path)) {
+			throw std::runtime_error("Path not find: " + m_home_path.string());
 		}
 
 		NodePtr root = make_shared<Node>("", "", false);
 
-		for_each(fs::recursive_directory_iterator(home_path), fs::recursive_directory_iterator(),
+		for_each(fs::recursive_directory_iterator(m_home_path), fs::recursive_directory_iterator(),
 			[this, &extensions, &root](fs::directory_entry const & entry) {
 			if (fs::is_regular_file(entry)) {
 				if (find(extensions.begin(), extensions.end(), entry.path().extension()) != extensions.end()) {
-                    NodePtr new_node = this->build_file_tree(entry.path().string());
-                    root->add_child(new_node);
-					//root->add_child(this->build_file_tree(entry.path().string()));
+					NodePtr new_node = this->build_file_tree(entry.path().string());
+					root->add_child(new_node);
 				}
 			}
 		});
@@ -74,8 +73,8 @@ struct TreeBuilder {
 		return root;
 	}
 private:
-	fs::path home_path;
-	vector<fs::path> include_paths;
+	fs::path m_home_path;
+	vector<fs::path> m_include_paths;
 
 	void build_file_tree(NodePtr parent, fs::path & path) const {
 		fs::ifstream istream_to_analyse(path);
@@ -107,11 +106,11 @@ private:
 
 	boost::optional<fs::path> get_path(string const & include_name, bool is_in_home) const {
 		if (is_in_home) {
-			return find_file_in_directory(home_path, include_name);
+			return find_file_in_directory(m_home_path, include_name);
 		}
 		else {
 			boost::optional<fs::path> result;
-			for (fs::path const & path_to_check : include_paths) {
+			for (fs::path const & path_to_check : m_include_paths) {
 				if (result = find_file_in_directory(path_to_check, include_name)) {
 					break;
 				}

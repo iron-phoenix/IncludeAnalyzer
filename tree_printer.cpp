@@ -8,21 +8,21 @@ void TreePrinter::print_tree(NodePtr const & node) {
 		return;
 	}
 
-	for (size_t i = 0; i != level; ++i) {
-		out << "..";
+	for (size_t i = 0; i != m_level; ++i) {
+		m_out << "..";
 	}
 
-	out << node->get_include_name();
+	m_out << node->get_include_name();
 
 	if (!node->is_file_exist()) {
-		out << " (!)";
+		m_out << " (!)";
 	}
 
-	out << '\n';
+	m_out << '\n';
 
-	++level;
+	++m_level;
 	for (NodePtr const & next_node : node->get_children()) {
 		print_tree(next_node);
 	}
-	--level;
+	--m_level;
 }

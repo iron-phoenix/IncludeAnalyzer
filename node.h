@@ -15,10 +15,10 @@ typedef shared_ptr<Node> NodePtr;
 
 struct Node {
 	Node(string const & path, string const & include_name, bool is_exist) :
-		path(path),
-		include_name(include_name),
-		is_exist(is_exist),
-		parent(nullptr)
+		m_path(path),
+		m_include_name(include_name),
+		m_is_exist(is_exist),
+		m_parent(nullptr)
 	{}
 
 	void add_child(NodePtr & child);
@@ -31,12 +31,12 @@ struct Node {
 	vector<NodePtr> const & get_children() const;
 
 private:
-	string path;
-	string include_name;
-	bool is_exist;
+	string m_path;
+	string m_include_name;
+	bool m_is_exist;
 
-	Node const * parent;
-	vector<NodePtr> children;
+	Node const * m_parent;
+	vector<NodePtr> m_children;
 };
 
 #endif

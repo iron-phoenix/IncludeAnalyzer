@@ -10,7 +10,7 @@ vector<IncludeFile> IncludeFinder::find_includes() {
 	bool is_any_symbol = false;
 
 	char peek = '\0';
-	while (in.get(peek)) {
+	while (m_in.get(peek)) {
 		if (isspace(peek)) {
 			skip_whitespaces();
 		}
@@ -44,11 +44,12 @@ vector<IncludeFile> IncludeFinder::find_includes() {
 }
 
 void IncludeFinder::process_comment() {
-	char peek = in.get();
+	char peek = '\0';
+	m_in.get(peek);
 
 	if (peek == '/') {
-		while (in && peek != '\n') {
-			peek = in.get();
+		while (m_in && peek != '\n') {
+			m_in.get(peek);
 		}
 	}
 	else if (peek == '*') {
@@ -58,9 +59,9 @@ void IncludeFinder::process_comment() {
 
 void IncludeFinder::process_string() {
 	char peek = '\0';
-	while (in.get(peek) && peek != '"') {
-		if (in && peek == '\\' && in.peek() == '"') {
-			in.get();
+	while (m_in.get(peek) && peek != '"') {
+		if (m_in && peek == '\\' && m_in.peek() == '"') {
+			m_in.get();
 		}
 	}
 }
@@ -71,15 +72,15 @@ void IncludeFinder::process_include(vector<IncludeFile> & include_files) {
 	skip_bad_symbols();
 
 	char tmp[8] = { 0 };
-	long long pos = in.tellg();
+	long long pos = m_in.tellg();
 
 	for (int i = 0; i != 7; ++i) {
-		if (!in) {
+		if (!m_in) {
 			break;
 		}
-		if (in.peek() == '\\') {
-			in.get();
-			if (in && in.get() == '\n') {
+		if (m_in.peek() == '\\') {
+			m_in.get();
+			if (m_in && m_in.get() == '\n') {
 				--i;
 				continue;
 			}
@@ -87,13 +88,13 @@ void IncludeFinder::process_include(vector<IncludeFile> & include_files) {
 				throw std::runtime_error("Syntax error. Please check your source files.");
 			}
 		}
-		in.get(tmp[i]);
+		m_in.get(tmp[i]);
 	}
 
 	if (strcmp(tmp, "include") == 0) {
 		skip_bad_symbols();
 
-		in.get(peek);
+		m_in.get(peek);
 
 		if (peek == '"' || peek == '<') {
 			add_file(include_files, peek);
@@ -103,7 +104,7 @@ void IncludeFinder::process_include(vector<IncludeFile> & include_files) {
 		}
 	}
 	else {
-		in.seekg(pos);
+		m_in.seekg(pos);
 	}
 }
 
@@ -115,18 +116,18 @@ void IncludeFinder::add_file(vector<IncludeFile> & include_files, char file_type
 	}
 
 	string file_name = "";
-	while (in.get(peek) && peek != file_type) {
-		if (in && peek == '\\' && in.peek() == '\n') {
-			in.get();
+	while (m_in.get(peek) && peek != file_type) {
+		if (m_in && peek == '\\' && m_in.peek() == '\n') {
+			m_in.get();
 			continue;
 		}
 		file_name.push_back(peek);
 	}
 	include_files.emplace_back(file_name, file_type == '"');
 
-	while (in.get(peek) && peek != '\n') {
+	while (m_in.get(peek) && peek != '\n') {
 		if (peek == '/') {
-			if (in && in.peek() == '*') {
+			if (m_in && m_in.peek() == '*') {
 				skip_multistring_comment();
 			}
 		}
@@ -136,10 +137,10 @@ void IncludeFinder::add_file(vector<IncludeFile> & include_files, char file_type
 void IncludeFinder::skip_multistring_comment() {
 	char peek = '\0';
 
-	while (in.get(peek)) {
+	while (m_in.get(peek)) {
 		if (peek == '*') {
-			if (in.peek() == '/') {
-				in.get();
+			if (m_in.peek() == '/') {
+				m_in.get();
 				break;
 			}
 		}
@@ -147,27 +148,27 @@ void IncludeFinder::skip_multistring_comment() {
 }
 
 void IncludeFinder::skip_whitespaces() {
-	while (in && in.peek() != '\n' && isspace(in.peek())) {
-		in.get();
+	while (m_in && m_in.peek() != '\n' && isspace(m_in.peek())) {
+		m_in.get();
 	}
 }
 
 void IncludeFinder::skip_bad_symbols() {
 	char peek = '\0';
-	while (in.get(peek)) {
+	while (m_in.get(peek)) {
 		if (isspace(peek)) {
 			skip_whitespaces();
 		}
-		else if (peek == '\\' && in.peek() == '\n') {
-			in.get();
+		else if (peek == '\\' && m_in.peek() == '\n') {
+			m_in.get();
 		}
-		else if (peek == '/' && in.peek() == '*') {
-			in.get();
+		else if (peek == '/' && m_in.peek() == '*') {
+			m_in.get();
 			skip_multistring_comment();
 		}
 		else {
 			break;
 		}
 	}
-	in.unget();
+	m_in.unget();
 }

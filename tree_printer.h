@@ -11,15 +11,18 @@ using std::vector;
 
 struct TreePrinter {
 	TreePrinter(ostream & out) :
-		out(out),
-		level(0)
+		m_out(out),
+		m_level(0)
 	{}
+
+	TreePrinter(TreePrinter const &) = delete;
+	TreePrinter & operator=(TreePrinter const &) = delete;
 
 	void print_tree(NodePtr const & node);
 
 private:
-	ostream & out;
-	size_t level;
+	ostream & m_out;
+	size_t m_level;
 };
 
 #endif

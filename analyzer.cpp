@@ -44,7 +44,7 @@ int main(int argc, char ** argv) {
 		frequency_set frequency = IncludeFrequency::include_frequency(root);
 
 		for (auto & f : frequency) {
-			std::cout << f.second << " " << f.first << std::endl;
+			std::cout << f.first << " " << f.second << std::endl;
 		}
 	}
 	catch (std::exception & e) {

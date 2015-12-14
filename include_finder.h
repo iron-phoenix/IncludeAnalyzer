@@ -13,7 +13,7 @@ using std::istream;
 
 struct IncludeFinder {
 	IncludeFinder(istream & in) :
-		in(in)
+		m_in(in)
 	{}
 
 	IncludeFinder(IncludeFinder const &) = delete;
@@ -22,7 +22,7 @@ struct IncludeFinder {
 	vector<IncludeFile> find_includes();
 
 private:
-	istream & in;
+	istream & m_in;
 
 	void process_comment();
 	void process_string();
