@@ -11,11 +11,11 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include <boost\filesystem\path.hpp>
-#include <boost\filesystem\fstream.hpp>
-#include <boost\filesystem\operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 
-#include <boost\optional\optional.hpp>
+#include <boost/optional/optional.hpp>
 
 using std::string;
 using std::vector;
@@ -50,7 +50,9 @@ struct TreeBuilder {
 			[this, &extensions, &root](fs::directory_entry const & entry) {
 			if (fs::is_regular_file(entry)) {
 				if (find(extensions.begin(), extensions.end(), entry.path().extension()) != extensions.end()) {
-					root->add_child(this->build_file_tree(entry.path().string()));
+                    NodePtr new_node = this->build_file_tree(entry.path().string());
+                    root->add_child(new_node);
+					//root->add_child(this->build_file_tree(entry.path().string()));
 				}
 			}
 		});

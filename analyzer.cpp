@@ -13,8 +13,7 @@ using std::vector;
 using std::string;
 
 int main(int argc, char ** argv) {
-	string const usage = "Usage: analyzer <source path> [options]\
-						Options: -I <include directory>";
+	string const usage = "Usage: analyzer <source path> [options]\nOptions: -I <include directory>";
 	if (argc < 2) {
 		std::cout << usage << std::endl;
 		return 1;
