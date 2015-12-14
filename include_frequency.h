@@ -7,14 +7,13 @@
 #include <utility>
 #include <string>
 #include <set>
-#include <functional>
+#include <cstddef>
 
 using std::unordered_map;
 using std::pair;
 using std::string;
 using std::make_pair;
 using std::set;
-using std::greater;
 
 struct Comparator {
 	bool operator()(pair<string, size_t> const & p1, pair<string, size_t> const & p2) {

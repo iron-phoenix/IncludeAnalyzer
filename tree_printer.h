@@ -5,6 +5,7 @@
 
 #include <ostream>
 #include <vector>
+#include <cstddef>
 
 using std::ostream;
 using std::vector;
