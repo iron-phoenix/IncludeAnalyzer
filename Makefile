@@ -11,7 +11,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $@ $(LDFLAGS)
 
 .cpp.o:
-	$(CXX) $(FLAGS) -c $<
+	$(CXX) $(FLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o analyzer
